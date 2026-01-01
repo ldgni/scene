@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
@@ -25,6 +26,8 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGitHubLoading, setIsGitHubLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const isSignUp = mode === "sign-up";
 
@@ -47,8 +50,24 @@ export default function AuthForm() {
     router.refresh();
   }
 
-  async function handleSocialSignIn(provider: "google" | "github") {
-    await authClient.signIn.social({ provider, callbackURL: "/" });
+  async function handleGitHubSignIn() {
+    setError("");
+    setIsGitHubLoading(true);
+    try {
+      await authClient.signIn.social({ provider: "github", callbackURL: "/" });
+    } finally {
+      setIsGitHubLoading(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    setError("");
+    setIsGoogleLoading(true);
+    try {
+      await authClient.signIn.social({ provider: "google", callbackURL: "/" });
+    } finally {
+      setIsGoogleLoading(false);
+    }
   }
 
   function toggleMode() {
@@ -72,16 +91,24 @@ export default function AuthForm() {
         <div className="grid grid-cols-2 gap-3">
           <Button
             variant="outline"
-            onClick={() => handleSocialSignIn("google")}
-            disabled={isLoading}>
-            <FaGoogle />
+            onClick={handleGoogleSignIn}
+            disabled={isGitHubLoading || isGoogleLoading || isLoading}>
+            {isGoogleLoading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <FaGoogle />
+            )}
             Google
           </Button>
           <Button
             variant="outline"
-            onClick={() => handleSocialSignIn("github")}
-            disabled={isLoading}>
-            <FaGithub />
+            onClick={handleGitHubSignIn}
+            disabled={isGitHubLoading || isGoogleLoading || isLoading}>
+            {isGitHubLoading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <FaGithub />
+            )}
             GitHub
           </Button>
         </div>

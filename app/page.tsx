@@ -11,7 +11,11 @@ export default async function HomePage() {
 
   if (!session) {
     return (
-      <div className="flex justify-center">
+      <div className="grid place-items-center gap-2">
+        <h1 className="text-4xl font-bold sm:text-6xl">Scene</h1>
+        <p className="text-muted-foreground mb-2 italic">
+          Keep track of your movie watchlist
+        </p>
         <AuthForm />
       </div>
     );
