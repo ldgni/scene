@@ -1,6 +1,5 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
@@ -16,6 +15,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
 
 export default function AuthForm() {
@@ -78,13 +79,11 @@ export default function AuthForm() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">
-          {isSignUp ? "Create an account" : "Welcome back"}
+        <CardTitle>
+          {isSignUp ? "Create an account" : "Log in to your account"}
         </CardTitle>
         <CardDescription>
-          {isSignUp
-            ? "Start tracking your movie watchlist"
-            : "Sign in to continue"}
+          {isSignUp ? "Sign up to create an account" : "Sign in to continue"}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -93,29 +92,20 @@ export default function AuthForm() {
             variant="outline"
             onClick={handleGoogleSignIn}
             disabled={isGitHubLoading || isGoogleLoading || isLoading}>
-            {isGoogleLoading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <FaGoogle />
-            )}
+            {isGoogleLoading ? <Spinner /> : <FaGoogle />}
             Google
           </Button>
           <Button
             variant="outline"
             onClick={handleGitHubSignIn}
             disabled={isGitHubLoading || isGoogleLoading || isLoading}>
-            {isGitHubLoading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <FaGithub />
-            )}
+            {isGitHubLoading ? <Spinner /> : <FaGithub />}
             GitHub
           </Button>
         </div>
-
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+            <Separator />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-card text-muted-foreground px-2">
@@ -123,7 +113,6 @@ export default function AuthForm() {
             </span>
           </div>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           {isSignUp && (
             <div className="space-y-2">
