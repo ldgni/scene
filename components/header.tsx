@@ -1,15 +1,24 @@
 import { Github } from "lucide-react";
+import { headers } from "next/headers";
 
+import AuthButton from "@/components/auth-button";
 import ModeToggle from "@/components/mode-toggle";
 import NavLinks from "@/components/nav-links";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { auth } from "@/lib/auth";
 
-export default function Header() {
+export default async function Header() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   return (
     <header className="mb-8 flex items-center justify-between">
       <NavLinks />
       <div className="flex h-4 items-center gap-2">
+        <AuthButton isAuthenticated={!!session} />
+        <Separator orientation="vertical" />
         <Button variant="ghost" size="icon" asChild>
           <a
             href="https://github.com/ldgni/scene"

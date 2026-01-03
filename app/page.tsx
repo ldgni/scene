@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 
-import AuthForm from "@/components/auth-form";
-import SignOutButton from "@/components/sign-out-button";
+import MovieSearch from "@/components/movie-search";
 import { auth } from "@/lib/auth";
 
 export default async function HomePage() {
@@ -9,22 +8,19 @@ export default async function HomePage() {
     headers: await headers(),
   });
 
-  if (!session) {
-    return (
-      <div className="grid place-items-center gap-2">
-        <h1 className="text-4xl font-bold sm:text-6xl">Scene</h1>
-        <p className="text-muted-foreground mb-2 italic">
-          Keep track of your movie watchlist
-        </p>
-        <AuthForm />
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-4">
-      <h1>Hello, {session.user.name}!</h1>
-      <SignOutButton />
+    <div className="space-y-6">
+      {session ? (
+        <h1 className="text-2xl font-bold">Welcome, {session.user.name}!</h1>
+      ) : (
+        <div className="text-center">
+          <h1 className="text-4xl font-bold sm:text-6xl">Scene</h1>
+          <p className="text-muted-foreground mt-2 italic">
+            Keep track of your movie watchlist
+          </p>
+        </div>
+      )}
+      <MovieSearch />
     </div>
   );
 }
