@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Star, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -39,9 +39,9 @@ export default function MovieSearch() {
       }
 
       const data: SearchResponse = await response.json();
-      // Sort by vote count (descending) and take top 8
+      // Sort by popularity (trending/popular movies first) and take top 8
       const sortedResults = [...data.results].sort(
-        (a, b) => b.vote_count - a.vote_count,
+        (a, b) => b.popularity - a.popularity,
       );
       setResults(sortedResults.slice(0, 8));
       setIsOpen(true);
@@ -173,12 +173,6 @@ export default function MovieSearch() {
                       {movie.release_date && (
                         <span>
                           {new Date(movie.release_date).getFullYear()}
-                        </span>
-                      )}
-                      {movie.vote_average > 0 && (
-                        <span className="flex items-center gap-0.5">
-                          <Star className="size-3 fill-amber-400 text-amber-400" />
-                          {movie.vote_average.toFixed(1)}
                         </span>
                       )}
                     </div>

@@ -1,13 +1,15 @@
-import { ArrowLeft, Calendar, Clock, Star } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { getWatchlistStatus } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import WatchlistButtons from "@/components/watchlist-buttons";
+import { auth } from "@/lib/auth";
 import { getImageUrl, getMovieDetails } from "@/lib/tmdb";
-import { formatRating, formatReleaseDate, formatRuntime } from "@/lib/utils";
+import { formatReleaseDate, formatRuntime } from "@/lib/utils";
 
 interface MoviePageProps {
   params: Promise<{ id: string }>;
@@ -42,32 +44,37 @@ export default async function MoviePage({ params }: MoviePageProps) {
     notFound();
   }
 
-  let movie;
-  try {
-    movie = await getMovieDetails(movieId);
-  } catch {
+  const [movie, session] = await Promise.all([
+    getMovieDetails(movieId).catch(() => null),
+    auth.api.getSession({ headers: await headers() }),
+  ]);
+
+  if (!movie) {
     notFound();
   }
+
+  const watchlistStatus = session
+    ? await getWatchlistStatus(movieId)
+    : { isPlanToWatch: false, isWatched: false };
 
   const posterUrl = getImageUrl(movie.poster_path, "w500");
 
   return (
     <div className="space-y-6">
-      {/* Back Button */}
-      <Button asChild variant="ghost">
-        <Link href="/">
-          <ArrowLeft />
-          Back to search
-        </Link>
-      </Button>
-
       {/* Main Content */}
       <div className="flex flex-col gap-6 sm:flex-row">
         {/* Poster */}
         <div className="mx-auto shrink-0 sm:mx-0">
           <div className="bg-muted relative aspect-2/3 w-48 overflow-hidden rounded-lg shadow-xl sm:w-52">
             {posterUrl ? (
-              <Image src={posterUrl} alt={movie.title} fill priority />
+              <Image
+                src={posterUrl}
+                alt={movie.title}
+                priority
+                fill
+                sizes="312px"
+                className="object-cover"
+              />
             ) : (
               <div className="text-muted-foreground flex h-full items-center justify-center">
                 No poster
@@ -94,17 +101,6 @@ export default async function MoviePage({ params }: MoviePageProps) {
                 <span>{formatRuntime(movie.runtime)}</span>
               </div>
             )}
-            {movie.vote_average > 0 && (
-              <div className="flex items-center gap-1.5">
-                <Star className="size-4 fill-amber-400 text-amber-400" />
-                <span className="font-medium">
-                  {formatRating(movie.vote_average)}
-                </span>
-                <span className="text-muted-foreground">
-                  ({movie.vote_count.toLocaleString()} votes)
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Genres */}
@@ -116,6 +112,20 @@ export default async function MoviePage({ params }: MoviePageProps) {
                 </Badge>
               ))}
             </div>
+          )}
+
+          {/* Watchlist Buttons */}
+          {session && (
+            <WatchlistButtons
+              movie={{
+                movieId: movie.id,
+                title: movie.title,
+                releaseDate: movie.release_date || null,
+                runtime: movie.runtime,
+                posterPath: movie.poster_path,
+              }}
+              initialStatus={watchlistStatus}
+            />
           )}
 
           {/* Overview */}

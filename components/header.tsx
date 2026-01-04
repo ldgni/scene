@@ -15,7 +15,7 @@ export default async function Header() {
 
   return (
     <header className="mb-8 flex items-center justify-between">
-      <NavLinks />
+      <NavLinks isAuthenticated={!!session} />
       <div className="flex h-4 items-center gap-2">
         <AuthButton isAuthenticated={!!session} />
         <Separator orientation="vertical" />

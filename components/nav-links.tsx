@@ -1,26 +1,53 @@
 "use client";
 
-import { Home } from "lucide-react";
+import { CheckCircle, Clock, Home } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 
-const navItems = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  authRequired?: boolean;
+}
+
+const navItems: NavItem[] = [
   {
     href: "/",
     label: "Home",
     icon: Home,
   },
+  {
+    href: "/plan-to-watch",
+    label: "Plan to watch",
+    icon: Clock,
+    authRequired: true,
+  },
+  {
+    href: "/watched",
+    label: "Watched",
+    icon: CheckCircle,
+    authRequired: true,
+  },
 ];
 
-export default function NavLinks() {
+interface NavLinksProps {
+  isAuthenticated?: boolean;
+}
+
+export default function NavLinks({ isAuthenticated = false }: NavLinksProps) {
   const pathname = usePathname();
+
+  const filteredNavItems = navItems.filter(
+    (item) => !item.authRequired || isAuthenticated,
+  );
 
   return (
     <nav>
       <ul className="flex gap-2">
-        {navItems.map((item) => (
+        {filteredNavItems.map((item) => (
           <li key={item.href}>
             <Button
               variant="ghost"

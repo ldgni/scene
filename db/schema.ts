@@ -90,6 +90,8 @@ export const verification = sqliteTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  planToWatch: many(planToWatch),
+  watched: many(watched),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -102,6 +104,65 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
+    references: [user.id],
+  }),
+}));
+
+// Watchlist tables
+export const planToWatch = sqliteTable(
+  "plan_to_watch",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    movieId: integer("movie_id").notNull(),
+    title: text("title").notNull(),
+    releaseDate: text("release_date"),
+    runtime: integer("runtime"),
+    posterPath: text("poster_path"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+  },
+  (table) => [
+    index("plan_to_watch_userId_idx").on(table.userId),
+    index("plan_to_watch_movieId_idx").on(table.movieId),
+  ],
+);
+
+export const watched = sqliteTable(
+  "watched",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    movieId: integer("movie_id").notNull(),
+    title: text("title").notNull(),
+    releaseDate: text("release_date"),
+    runtime: integer("runtime"),
+    posterPath: text("poster_path"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+  },
+  (table) => [
+    index("watched_userId_idx").on(table.userId),
+    index("watched_movieId_idx").on(table.movieId),
+  ],
+);
+
+export const planToWatchRelations = relations(planToWatch, ({ one }) => ({
+  user: one(user, {
+    fields: [planToWatch.userId],
+    references: [user.id],
+  }),
+}));
+
+export const watchedRelations = relations(watched, ({ one }) => ({
+  user: one(user, {
+    fields: [watched.userId],
     references: [user.id],
   }),
 }));

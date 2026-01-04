@@ -25,7 +25,3 @@ export function formatReleaseDate(dateString: string): string {
     return dateString;
   }
 }
-
-export function formatRating(rating: number): string {
-  return rating.toFixed(1);
-}

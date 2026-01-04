@@ -8,6 +8,20 @@
       "when": 1767270108382,
       "tag": "0000_icy_eternity",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1767526632853,
+      "tag": "0001_thankful_punisher",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1767532736815,
+      "tag": "0002_strange_human_fly",
+      "breakpoints": true
     }
   ]
 }
