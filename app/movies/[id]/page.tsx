@@ -5,12 +5,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { getImageUrl, getMovieDetails } from "@/lib/tmdb";
-import {
-  formatRating,
-  formatReleaseDate,
-  formatRuntime,
-} from "@/lib/utils";
+import { formatRating, formatReleaseDate, formatRuntime } from "@/lib/utils";
 
 interface MoviePageProps {
   params: Promise<{ id: string }>;
@@ -57,27 +54,20 @@ export default async function MoviePage({ params }: MoviePageProps) {
   return (
     <div className="space-y-6">
       {/* Back Button */}
-      <Link
-        href="/"
-        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors">
-        <ArrowLeft className="size-4" />
-        Back to search
-      </Link>
+      <Button asChild variant="ghost">
+        <Link href="/">
+          <ArrowLeft />
+          Back to search
+        </Link>
+      </Button>
 
       {/* Main Content */}
       <div className="flex flex-col gap-6 sm:flex-row">
         {/* Poster */}
         <div className="mx-auto shrink-0 sm:mx-0">
-          <div className="bg-muted relative aspect-[2/3] w-48 overflow-hidden rounded-lg shadow-xl sm:w-52">
+          <div className="bg-muted relative aspect-2/3 w-48 overflow-hidden rounded-lg shadow-xl sm:w-52">
             {posterUrl ? (
-              <Image
-                src={posterUrl}
-                alt={movie.title}
-                fill
-                className="object-cover"
-                sizes="208px"
-                priority
-              />
+              <Image src={posterUrl} alt={movie.title} fill priority />
             ) : (
               <div className="text-muted-foreground flex h-full items-center justify-center">
                 No poster
@@ -88,14 +78,7 @@ export default async function MoviePage({ params }: MoviePageProps) {
 
         {/* Details */}
         <div className="flex-1 space-y-4">
-          <div>
-            <h1 className="text-2xl font-bold sm:text-3xl">{movie.title}</h1>
-            {movie.tagline && (
-              <p className="text-muted-foreground mt-1 italic">
-                &ldquo;{movie.tagline}&rdquo;
-              </p>
-            )}
-          </div>
+          <h1 className="text-2xl font-bold sm:text-3xl">{movie.title}</h1>
 
           {/* Meta Info */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
@@ -149,4 +132,3 @@ export default async function MoviePage({ params }: MoviePageProps) {
     </div>
   );
 }
-
