@@ -115,18 +115,17 @@ export default async function MoviePage({ params }: MoviePageProps) {
           )}
 
           {/* Watchlist Buttons */}
-          {session && (
-            <WatchlistButtons
-              movie={{
-                movieId: movie.id,
-                title: movie.title,
-                releaseDate: movie.release_date || null,
-                runtime: movie.runtime,
-                posterPath: movie.poster_path,
-              }}
-              initialStatus={watchlistStatus}
-            />
-          )}
+          <WatchlistButtons
+            movie={{
+              movieId: movie.id,
+              title: movie.title,
+              releaseDate: movie.release_date || null,
+              runtime: movie.runtime,
+              posterPath: movie.poster_path,
+            }}
+            initialStatus={watchlistStatus}
+            isAuthenticated={!!session}
+          />
 
           {/* Overview */}
           {movie.overview && (

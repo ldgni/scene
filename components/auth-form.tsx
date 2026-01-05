@@ -13,9 +13,13 @@ import { authClient } from "@/lib/auth-client";
 
 interface AuthFormProps {
   onSuccess?: () => void;
+  callbackURL?: string;
 }
 
-export default function AuthForm({ onSuccess }: AuthFormProps) {
+export default function AuthForm({
+  onSuccess,
+  callbackURL = "/",
+}: AuthFormProps) {
   const router = useRouter();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [name, setName] = useState("");
@@ -44,7 +48,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
     }
 
     onSuccess?.();
-    router.push("/");
+    router.push(callbackURL);
     router.refresh();
   }
 
@@ -52,7 +56,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
     setError("");
     setIsGitHubLoading(true);
     try {
-      await authClient.signIn.social({ provider: "github", callbackURL: "/" });
+      await authClient.signIn.social({ provider: "github", callbackURL });
     } finally {
       setIsGitHubLoading(false);
     }
@@ -62,7 +66,7 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
     setError("");
     setIsGoogleLoading(true);
     try {
-      await authClient.signIn.social({ provider: "google", callbackURL: "/" });
+      await authClient.signIn.social({ provider: "google", callbackURL });
     } finally {
       setIsGoogleLoading(false);
     }
