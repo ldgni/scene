@@ -1,6 +1,6 @@
 # Scene
 
-> Movie watchlist tracker
+> Movie watchlist collection
 
 ## Running Locally
 
