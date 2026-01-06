@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatReleaseDate, formatRuntime } from "@/lib/utils";
+import { formatReleaseDate } from "@/lib/utils";
 
 interface WatchlistMovie {
   id: string;
@@ -102,7 +102,6 @@ export default function WatchlistTable({
           <TableRow>
             <TableHead>Title</TableHead>
             <TableHead>Release Date</TableHead>
-            <TableHead>Duration</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -113,21 +112,18 @@ export default function WatchlistTable({
             return (
               <TableRow key={movie.id}>
                 <TableCell>
-                  <Link href={`/movies/${movie.movieId}`}>{movie.title}</Link>
+                  <Link
+                    href={`/movies/${movie.movieId}`}
+                    className="block max-w-xs truncate"
+                    title={movie.title}>
+                    {movie.title}
+                  </Link>
                 </TableCell>
 
                 <TableCell>
                   {movie.releaseDate
                     ? formatReleaseDate(movie.releaseDate)
                     : "—"}
-                </TableCell>
-
-                <TableCell>
-                  {movie.runtime ? (
-                    <span>{formatRuntime(movie.runtime)}</span>
-                  ) : (
-                    "—"
-                  )}
                 </TableCell>
 
                 <TableCell className="text-center">
