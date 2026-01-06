@@ -44,18 +44,15 @@ export default async function MoviePage({ params }: MoviePageProps) {
     notFound();
   }
 
-  const [movie, session] = await Promise.all([
+  const [movie, session, watchlistStatus] = await Promise.all([
     getMovieDetails(movieId).catch(() => null),
     auth.api.getSession({ headers: await headers() }),
+    getWatchlistStatus(movieId),
   ]);
 
   if (!movie) {
     notFound();
   }
-
-  const watchlistStatus = session
-    ? await getWatchlistStatus(movieId)
-    : { isPlanToWatch: false, isWatched: false };
 
   const posterUrl = getImageUrl(movie.poster_path, "w500");
 
