@@ -21,6 +21,8 @@ const movieDataSchema = z.object({
   posterPath: z.string().nullish(),
 });
 
+export type MovieData = z.infer<typeof movieDataSchema>;
+
 const movieIdSchema = z.object({
   movieId: z.number().int().positive("Invalid movie ID"),
 });
