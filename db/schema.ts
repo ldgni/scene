@@ -1,5 +1,11 @@
 import { relations, sql } from "drizzle-orm";
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  integer,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -128,6 +134,7 @@ export const planToWatch = sqliteTable(
   (table) => [
     index("plan_to_watch_userId_idx").on(table.userId),
     index("plan_to_watch_movieId_idx").on(table.movieId),
+    uniqueIndex("plan_to_watch_user_movie_idx").on(table.userId, table.movieId),
   ],
 );
 
@@ -150,6 +157,7 @@ export const watched = sqliteTable(
   (table) => [
     index("watched_userId_idx").on(table.userId),
     index("watched_movieId_idx").on(table.movieId),
+    uniqueIndex("watched_user_movie_idx").on(table.userId, table.movieId),
   ],
 );
 
