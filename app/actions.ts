@@ -1,22 +1,38 @@
 "use server";
 
-import { and, desc, eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { z } from "zod";
 
-import { db } from "@/db";
-import { planToWatch, watched } from "@/db/schema";
+import { deletePlanToWatch, deleteWatched } from "@/db/queries/delete";
+import { insertPlanToWatch, insertWatched } from "@/db/queries/insert";
+import {
+  findPlanToWatchEntry,
+  findWatchedEntry,
+  getPlanToWatchByUserId,
+  getWatchedByUserId,
+} from "@/db/queries/select";
 import { auth } from "@/lib/auth";
 
-export type MovieData = {
-  movieId: number;
-  title: string;
-  releaseDate?: string | null;
-  runtime?: number | null;
-  posterPath?: string | null;
-};
+const movieDataSchema = z.object({
+  movieId: z.number().int().positive(),
+  title: z.string().min(1, "Title is required"),
+  releaseDate: z.string().nullish(),
+  runtime: z.number().int().positive().nullish(),
+  posterPath: z.string().nullish(),
+});
+
+const movieIdSchema = z.object({
+  movieId: z.number().int().positive("Invalid movie ID"),
+});
 
 // Get watchlist status for a movie
 export async function getWatchlistStatus(movieId: number) {
+  const parsed = movieIdSchema.safeParse({ movieId });
+
+  if (!parsed.success) {
+    return { isPlanToWatch: false, isWatched: false };
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -25,22 +41,10 @@ export async function getWatchlistStatus(movieId: number) {
     return { isPlanToWatch: false, isWatched: false };
   }
 
-  const [planToWatchEntry] = await db
-    .select()
-    .from(planToWatch)
-    .where(
-      and(
-        eq(planToWatch.userId, session.user.id),
-        eq(planToWatch.movieId, movieId),
-      ),
-    );
-
-  const [watchedEntry] = await db
-    .select()
-    .from(watched)
-    .where(
-      and(eq(watched.userId, session.user.id), eq(watched.movieId, movieId)),
-    );
+  const [planToWatchEntry, watchedEntry] = await Promise.all([
+    findPlanToWatchEntry(session.user.id, parsed.data.movieId),
+    findWatchedEntry(session.user.id, parsed.data.movieId),
+  ]);
 
   return {
     isPlanToWatch: !!planToWatchEntry,
@@ -49,7 +53,13 @@ export async function getWatchlistStatus(movieId: number) {
 }
 
 // Add to plan to watch
-export async function addToPlanToWatch(movie: MovieData) {
+export async function addToPlanToWatch(movie: z.infer<typeof movieDataSchema>) {
+  const parsed = movieDataSchema.safeParse(movie);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -58,44 +68,40 @@ export async function addToPlanToWatch(movie: MovieData) {
     return { error: "Unauthorized" };
   }
 
-  const { movieId, title, releaseDate, runtime, posterPath } = movie;
-
-  if (!movieId || !title) {
-    return { error: "Movie ID and title are required" };
-  }
+  const { movieId, title, releaseDate, runtime, posterPath } = parsed.data;
 
   // Check if already in plan to watch
-  const [existing] = await db
-    .select()
-    .from(planToWatch)
-    .where(
-      and(
-        eq(planToWatch.userId, session.user.id),
-        eq(planToWatch.movieId, movieId),
-      ),
-    );
+  const existing = await findPlanToWatchEntry(session.user.id, movieId);
 
   if (existing) {
     return { error: "Movie already in plan to watch" };
   }
 
-  const id = crypto.randomUUID();
+  try {
+    await insertPlanToWatch({
+      id: crypto.randomUUID(),
+      userId: session.user.id,
+      movieId,
+      title,
+      releaseDate,
+      runtime,
+      posterPath,
+    });
 
-  await db.insert(planToWatch).values({
-    id,
-    userId: session.user.id,
-    movieId,
-    title,
-    releaseDate,
-    runtime,
-    posterPath,
-  });
-
-  return { success: true, id };
+    return { success: true };
+  } catch {
+    return { error: "Failed to add movie to plan to watch" };
+  }
 }
 
 // Remove from plan to watch
 export async function removeFromPlanToWatch(movieId: number) {
+  const parsed = movieIdSchema.safeParse({ movieId });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -104,20 +110,23 @@ export async function removeFromPlanToWatch(movieId: number) {
     return { error: "Unauthorized" };
   }
 
-  await db
-    .delete(planToWatch)
-    .where(
-      and(
-        eq(planToWatch.userId, session.user.id),
-        eq(planToWatch.movieId, movieId),
-      ),
-    );
+  try {
+    await deletePlanToWatch(session.user.id, parsed.data.movieId);
 
-  return { success: true };
+    return { success: true };
+  } catch {
+    return { error: "Failed to remove movie from plan to watch" };
+  }
 }
 
 // Add to watched
-export async function addToWatched(movie: MovieData) {
+export async function addToWatched(movie: z.infer<typeof movieDataSchema>) {
+  const parsed = movieDataSchema.safeParse(movie);
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -126,52 +135,44 @@ export async function addToWatched(movie: MovieData) {
     return { error: "Unauthorized" };
   }
 
-  const { movieId, title, releaseDate, runtime, posterPath } = movie;
-
-  if (!movieId || !title) {
-    return { error: "Movie ID and title are required" };
-  }
+  const { movieId, title, releaseDate, runtime, posterPath } = parsed.data;
 
   // Check if already watched
-  const [existing] = await db
-    .select()
-    .from(watched)
-    .where(
-      and(eq(watched.userId, session.user.id), eq(watched.movieId, movieId)),
-    );
+  const existing = await findWatchedEntry(session.user.id, movieId);
 
   if (existing) {
     return { error: "Movie already marked as watched" };
   }
 
-  const id = crypto.randomUUID();
+  try {
+    // Add to watched
+    await insertWatched({
+      id: crypto.randomUUID(),
+      userId: session.user.id,
+      movieId,
+      title,
+      releaseDate,
+      runtime,
+      posterPath,
+    });
 
-  // Add to watched
-  await db.insert(watched).values({
-    id,
-    userId: session.user.id,
-    movieId,
-    title,
-    releaseDate,
-    runtime,
-    posterPath,
-  });
+    // Remove from plan to watch if it was there
+    await deletePlanToWatch(session.user.id, movieId);
 
-  // Remove from plan to watch if it was there
-  await db
-    .delete(planToWatch)
-    .where(
-      and(
-        eq(planToWatch.userId, session.user.id),
-        eq(planToWatch.movieId, movieId),
-      ),
-    );
-
-  return { success: true, id };
+    return { success: true };
+  } catch {
+    return { error: "Failed to add movie to watched" };
+  }
 }
 
 // Remove from watched
 export async function removeFromWatched(movieId: number) {
+  const parsed = movieIdSchema.safeParse({ movieId });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -180,16 +181,13 @@ export async function removeFromWatched(movieId: number) {
     return { error: "Unauthorized" };
   }
 
-  await db
-    .delete(watched)
-    .where(
-      and(
-        eq(watched.userId, session.user.id),
-        eq(watched.movieId, movieId),
-      ),
-    );
+  try {
+    await deleteWatched(session.user.id, parsed.data.movieId);
 
-  return { success: true };
+    return { success: true };
+  } catch {
+    return { error: "Failed to remove movie from watched" };
+  }
 }
 
 // Get plan to watch list
@@ -202,11 +200,7 @@ export async function getPlanToWatchList() {
     return { movies: [] };
   }
 
-  const movies = await db
-    .select()
-    .from(planToWatch)
-    .where(eq(planToWatch.userId, session.user.id))
-    .orderBy(desc(planToWatch.createdAt));
+  const movies = await getPlanToWatchByUserId(session.user.id);
 
   return { movies };
 }
@@ -221,12 +215,7 @@ export async function getWatchedList() {
     return { movies: [] };
   }
 
-  const movies = await db
-    .select()
-    .from(watched)
-    .where(eq(watched.userId, session.user.id))
-    .orderBy(desc(watched.createdAt));
+  const movies = await getWatchedByUserId(session.user.id);
 
   return { movies };
 }
-
