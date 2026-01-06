@@ -3,6 +3,7 @@
 import { BookmarkCheck, CheckCircle, CheckCircle2, Clock } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import {
   addToPlanToWatch,
@@ -45,8 +46,13 @@ export default function WatchlistButtons({
       return;
     }
     setActionLoading("plan");
-    await addToPlanToWatch(movie);
-    setStatus((prev) => ({ ...prev, isPlanToWatch: true }));
+    const result = await addToPlanToWatch(movie);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setStatus((prev) => ({ ...prev, isPlanToWatch: true }));
+      toast.success("Added to watchlist");
+    }
     setActionLoading(null);
     router.refresh();
   };
@@ -57,8 +63,13 @@ export default function WatchlistButtons({
       return;
     }
     setActionLoading("plan");
-    await removeFromPlanToWatch(movie.movieId);
-    setStatus((prev) => ({ ...prev, isPlanToWatch: false }));
+    const result = await removeFromPlanToWatch(movie.movieId);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setStatus((prev) => ({ ...prev, isPlanToWatch: false }));
+      toast.success("Removed from watchlist");
+    }
     setActionLoading(null);
     router.refresh();
   };
@@ -69,8 +80,13 @@ export default function WatchlistButtons({
       return;
     }
     setActionLoading("watched");
-    await addToWatched(movie);
-    setStatus({ isPlanToWatch: false, isWatched: true });
+    const result = await addToWatched(movie);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setStatus({ isPlanToWatch: false, isWatched: true });
+      toast.success("Marked as watched");
+    }
     setActionLoading(null);
     router.refresh();
   };
@@ -81,8 +97,13 @@ export default function WatchlistButtons({
       return;
     }
     setActionLoading("watched");
-    await removeFromWatched(movie.movieId);
-    setStatus((prev) => ({ ...prev, isWatched: false }));
+    const result = await removeFromWatched(movie.movieId);
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setStatus((prev) => ({ ...prev, isWatched: false }));
+      toast.success("Removed from watched");
+    }
     setActionLoading(null);
     router.refresh();
   };

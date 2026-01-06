@@ -4,6 +4,7 @@ import { CheckCircle, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import {
   addToWatched,
@@ -45,26 +46,39 @@ export default function WatchlistTable({
 
   const handleRemove = async (movieId: number) => {
     setLoadingId(movieId);
-    if (type === "plan-to-watch") {
-      await removeFromPlanToWatch(movieId);
+    const result =
+      type === "plan-to-watch"
+        ? await removeFromPlanToWatch(movieId)
+        : await removeFromWatched(movieId);
+    if (result.error) {
+      toast.error(result.error);
     } else {
-      await removeFromWatched(movieId);
+      setMovies((prev) => prev.filter((m) => m.movieId !== movieId));
+      toast.success(
+        type === "plan-to-watch"
+          ? "Removed from watchlist"
+          : "Removed from watched",
+      );
     }
-    setMovies((prev) => prev.filter((m) => m.movieId !== movieId));
     setLoadingId(null);
     router.refresh();
   };
 
   const handleMarkAsWatched = async (movie: WatchlistMovie) => {
     setLoadingId(movie.movieId);
-    await addToWatched({
+    const result = await addToWatched({
       movieId: movie.movieId,
       title: movie.title,
       releaseDate: movie.releaseDate,
       runtime: movie.runtime,
       posterPath: movie.posterPath,
     });
-    setMovies((prev) => prev.filter((m) => m.movieId !== movie.movieId));
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      setMovies((prev) => prev.filter((m) => m.movieId !== movie.movieId));
+      toast.success("Marked as watched");
+    }
     setLoadingId(null);
     router.refresh();
   };

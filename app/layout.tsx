@@ -6,6 +6,7 @@ import { Geist } from "next/font/google";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default function RootLayout({
             <main className="grow">{children}</main>
             <Footer />
           </div>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

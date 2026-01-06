@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,7 @@ export default function AuthForm({
       return;
     }
 
+    toast.success(isSignUp ? "Account created!" : "Welcome back!");
     onSuccess?.();
     router.push(callbackURL);
     router.refresh();
