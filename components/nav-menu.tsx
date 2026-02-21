@@ -25,14 +25,6 @@ const navItems = [
     url: "/",
     name: "Home",
   },
-  {
-    url: "/test1",
-    name: "Test Page 1",
-  },
-  {
-    url: "/test2",
-    name: "Test Page 2",
-  },
 ];
 
 export default function NavMenu() {
