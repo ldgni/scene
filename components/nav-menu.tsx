@@ -39,7 +39,7 @@ export default function NavMenu() {
         </SheetTrigger>
         <SheetContent side="left">
           <SheetHeader>
-            <SheetTitle>Pulse</SheetTitle>
+            <SheetTitle>Scene</SheetTitle>
             <SheetDescription>Menu</SheetDescription>
           </SheetHeader>
           <nav className="px-4">
