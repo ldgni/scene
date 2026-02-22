@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 
+import SearchInput from "@/components/search-input";
 import SignInButtons from "@/components/sign-in-buttons";
 import {
   Card,
@@ -24,7 +25,7 @@ export default async function HomePage() {
         </p>
       </div>
       {session ? (
-        <p className="text-center">Welcome {session.user.name}!</p>
+        <SearchInput />
       ) : (
         <Card className="mx-auto max-w-xs">
           <CardHeader>
