@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 
 import SignInButtons from "@/components/sign-in-buttons";
-import SignOutButton from "@/components/sign-out-button";
 import {
   Card,
   CardContent,
@@ -25,10 +24,7 @@ export default async function HomePage() {
         </p>
       </div>
       {session ? (
-        <div className="space-y-4 text-center">
-          <p>Welcome {session.user.name}!</p>
-          <SignOutButton />
-        </div>
+        <p className="text-center">Welcome {session.user.name}!</p>
       ) : (
         <Card className="mx-auto max-w-xs">
           <CardHeader>

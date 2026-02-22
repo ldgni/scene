@@ -1,5 +1,6 @@
 "use client";
 
+import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -12,7 +13,9 @@ export default function SignOutButton() {
 
   return (
     <Button
-      variant="outline"
+      variant="ghost"
+      size="icon"
+      aria-label="Sign out"
       disabled={loading}
       onClick={async () =>
         await signOut({
@@ -29,7 +32,8 @@ export default function SignOutButton() {
           },
         })
       }>
-      Sign out
+      <LogOut />
+      <span className="sr-only">Sign out</span>
     </Button>
   );
 }
