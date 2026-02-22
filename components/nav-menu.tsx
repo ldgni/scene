@@ -21,13 +21,13 @@ import {
 } from "@/components/ui/sheet";
 
 const navItems = [
-  {
-    url: "/",
-    name: "Home",
-  },
+  { url: "/", name: "Home" },
+  { url: "/watchlist", name: "Watchlist", protected: true },
 ];
 
-export default function NavMenu() {
+export default function NavMenu({ isLoggedIn }: { isLoggedIn: boolean }) {
+  const allNavItems = navItems.filter((item) => !item.protected || isLoggedIn);
+
   return (
     <>
       {/* Mobile Menu */}
@@ -44,7 +44,7 @@ export default function NavMenu() {
           </SheetHeader>
           <nav className="px-4">
             <ul className="space-y-4">
-              {navItems.map((item) => (
+              {allNavItems.map((item) => (
                 <li key={item.url}>
                   <SheetClose asChild>
                     <Link href={item.url}>{item.name}</Link>
@@ -59,7 +59,7 @@ export default function NavMenu() {
       {/* Desktop Menu */}
       <NavigationMenu className="hidden sm:block">
         <NavigationMenuList className="gap-4 font-medium">
-          {navItems.map((item) => (
+          {allNavItems.map((item) => (
             <NavigationMenuItem key={item.url}>
               <NavigationMenuLink asChild>
                 <Link href={item.url}>{item.name}</Link>

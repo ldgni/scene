@@ -15,7 +15,7 @@ export default async function Header() {
 
   return (
     <header className="mx-auto flex w-full max-w-2xl items-center justify-between p-4">
-      <NavMenu />
+      <NavMenu isLoggedIn={!!session} />
       <div className="flex h-4 items-center gap-2">
         {session && (
           <>
