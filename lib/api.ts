@@ -30,7 +30,9 @@ export async function searchMedia(query: string): Promise<SearchResult[]> {
 
 // Fetch movie details
 export async function getMovieDetails(id: number): Promise<Movie> {
-  const data = await fetchFromAPI(`/movie/${id}?language=en-US`);
+  const data = await fetchFromAPI(
+    `/movie/${id}?language=en-US&append_to_response=credits`,
+  );
   return { ...data, media_type: "movie" };
 }
 
