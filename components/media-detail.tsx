@@ -6,7 +6,6 @@ import type { Movie, TVShow } from "@/lib/types";
 
 export default function MediaDetail({ media }: { media: Movie | TVShow }) {
   const isMovie = media.media_type === "movie";
-
   const title = isMovie ? (media as Movie).title : (media as TVShow).name;
 
   const releaseYear = isMovie
@@ -28,24 +27,20 @@ export default function MediaDetail({ media }: { media: Movie | TVShow }) {
       </div>
       <div className="flex flex-col gap-2 text-sm">
         <h1 className="text-2xl font-extrabold tracking-tight">{title}</h1>
-        {director && (
-          <p>
-            {isMovie ? "Directed by" : "Created by"} {director}
-          </p>
-        )}
+        <p>
+          {isMovie ? "Directed by" : "Created by"} {director}
+        </p>
         <p className="text-muted-foreground">
           {releaseYear} · {runtime}
         </p>
-        {media.genres.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {media.genres.map((genre) => (
-              <Badge key={genre.id} variant="secondary">
-                {genre.name}
-              </Badge>
-            ))}
-          </div>
-        )}
-        {media.overview && <p className="my-2">{media.overview}</p>}
+        <div className="flex flex-wrap gap-2">
+          {media.genres.map((genre) => (
+            <Badge key={genre.id} variant="secondary">
+              {genre.name}
+            </Badge>
+          ))}
+        </div>
+        <p className="my-2">{media.overview}</p>
         <Button disabled title="Coming soon">
           <BookmarkPlus />
           Add to Watchlist
