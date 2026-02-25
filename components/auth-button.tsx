@@ -56,7 +56,7 @@ export default function AuthButton({ isLoggedIn }: { isLoggedIn: boolean }) {
           <span className="sr-only">Sign in</span>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Sign in</DialogTitle>
           <DialogDescription>Choose a provider to sign in</DialogDescription>
