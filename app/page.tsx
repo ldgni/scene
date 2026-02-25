@@ -1,4 +1,4 @@
-import SearchInput from "@/components/search-input";
+import SearchBar from "@/components/search-bar";
 
 export default async function HomePage() {
   return (
@@ -9,7 +9,7 @@ export default async function HomePage() {
           Track your movies & TV shows
         </p>
       </div>
-      <SearchInput />
+      <SearchBar />
     </>
   );
 }
