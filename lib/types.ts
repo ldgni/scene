@@ -20,7 +20,6 @@ export type Movie = {
   media_type: "movie";
   title: string;
   overview: string;
-  poster_path: string | null;
   release_date: string;
   runtime: number | null;
   genres: Genre[];
@@ -34,7 +33,6 @@ export type TVShow = {
   media_type: "tv";
   name: string;
   overview: string;
-  poster_path: string | null;
   first_air_date: string;
   genres: Genre[];
   number_of_seasons: number;
@@ -48,7 +46,6 @@ export type SearchResult = {
   title?: string;
   name?: string;
   overview: string;
-  poster_path: string | null;
   release_date?: string;
   first_air_date?: string;
   genre_ids: number[];
