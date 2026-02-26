@@ -24,7 +24,8 @@ export async function searchMedia(query: string): Promise<SearchResult[]> {
   );
   return data.results.filter(
     (item: SearchResult) =>
-      item.media_type === "movie" || item.media_type === "tv",
+      (item.media_type === "movie" || item.media_type === "tv") &&
+      item.overview,
   );
 }
 
