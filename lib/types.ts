@@ -20,7 +20,7 @@ export type Movie = {
   media_type: "movie";
   title: string;
   overview: string;
-  release_date: string;
+  release_date?: string;
   runtime: number | null;
   genres: Genre[];
   credits: {
@@ -33,7 +33,7 @@ export type TVShow = {
   media_type: "tv";
   name: string;
   overview: string;
-  first_air_date: string;
+  first_air_date?: string;
   genres: Genre[];
   number_of_seasons: number;
   number_of_episodes: number;
