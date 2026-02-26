@@ -9,11 +9,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { SearchResult } from "@/lib/types";
+import { getMediaTitle, getMediaYear } from "@/lib/utils";
 
 export default function SearchResultCard({ result }: { result: SearchResult }) {
-  const title = result.title ?? result.name;
-  const year =
-    (result.release_date || result.first_air_date)?.slice(0, 4) || "TBA";
+  const title = getMediaTitle(result);
+  const year = getMediaYear(result);
   const href = `/${result.media_type}/${result.id}`;
 
   return (
