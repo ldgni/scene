@@ -20,7 +20,7 @@ async function fetchFromAPI(endpoint: string) {
 // Search movies and TV shows
 export async function searchMedia(query: string): Promise<SearchResult[]> {
   const data = await fetchFromAPI(
-    `/search/multi?query=${encodeURIComponent(query)}&include_adult=false`,
+    `/search/multi?query=${encodeURIComponent(query)}`,
   );
   return data.results.filter(
     (item: SearchResult) =>
@@ -30,14 +30,12 @@ export async function searchMedia(query: string): Promise<SearchResult[]> {
 
 // Fetch movie details
 export async function getMovieDetails(id: number): Promise<Movie> {
-  const data = await fetchFromAPI(
-    `/movie/${id}?language=en-US&append_to_response=credits`,
-  );
+  const data = await fetchFromAPI(`/movie/${id}?append_to_response=credits`);
   return { ...data, media_type: "movie" };
 }
 
 // Fetch TV show details
 export async function getTVShowDetails(id: number): Promise<TVShow> {
-  const data = await fetchFromAPI(`/tv/${id}?language=en-US`);
+  const data = await fetchFromAPI(`/tv/${id}`);
   return { ...data, media_type: "tv" };
 }
