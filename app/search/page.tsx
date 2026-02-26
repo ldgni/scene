@@ -12,7 +12,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
   return (
     <>
-      <SearchBar />
+      <SearchBar defaultValue={q} />
       <div className="mt-8">
         {!q ? (
           <p className="text-muted-foreground text-center text-sm">
