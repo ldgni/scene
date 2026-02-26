@@ -1,18 +1,17 @@
-export type Genre = {
+type Genre = {
   id: number;
   name: string;
 };
 
-export type Creator = {
+type Creator = {
   id: number;
   name: string;
 };
 
-export type CrewMember = {
+type CrewMember = {
   id: number;
   name: string;
   job: string;
-  department: string;
 };
 
 export type Movie = {
@@ -35,7 +34,6 @@ export type TVShow = {
   overview: string;
   first_air_date?: string;
   genres: Genre[];
-  number_of_seasons: number;
   number_of_episodes: number;
   created_by: Creator[];
 };
@@ -48,5 +46,4 @@ export type SearchResult = {
   overview: string;
   release_date?: string;
   first_air_date?: string;
-  genre_ids: number[];
 };
