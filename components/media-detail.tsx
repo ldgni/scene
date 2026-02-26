@@ -1,5 +1,6 @@
 import { BookmarkPlus } from "lucide-react";
 
+import SearchBar from "@/components/search-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Movie, TVShow } from "@/lib/types";
@@ -18,7 +19,8 @@ export default function MediaDetail({ media }: { media: Movie | TVShow }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <h1 className="text-2xl font-extrabold tracking-tight">{title}</h1>
+      <SearchBar />
+      <h1 className="mt-8 text-2xl font-extrabold tracking-tight">{title}</h1>
       <p>
         {media.media_type === "movie" ? "Directed by" : "Created by"} {director}
       </p>
