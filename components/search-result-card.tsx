@@ -12,7 +12,8 @@ import type { SearchResult } from "@/lib/types";
 
 export default function SearchResultCard({ result }: { result: SearchResult }) {
   const title = result.title ?? result.name;
-  const year = (result.release_date ?? result.first_air_date)?.slice(0, 4);
+  const year =
+    (result.release_date || result.first_air_date)?.slice(0, 4) || "TBA";
   const href = `/${result.media_type}/${result.id}`;
 
   return (

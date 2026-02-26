@@ -8,16 +8,21 @@ export default function MediaDetail({ media }: { media: Movie | TVShow }) {
   const isMovie = media.media_type === "movie";
   const title = isMovie ? (media as Movie).title : (media as TVShow).name;
 
-  const releaseYear = isMovie
-    ? (media as Movie).release_date?.slice(0, 4)
-    : (media as TVShow).first_air_date?.slice(0, 4);
+  const releaseYear =
+    (isMovie
+      ? (media as Movie).release_date
+      : (media as TVShow).first_air_date
+    )?.slice(0, 4) || "TBA";
 
   const director = isMovie
     ? (media as Movie).credits.crew.find((c) => c.job === "Director")?.name
     : (media as TVShow).created_by.map((c) => c.name).join(", ");
 
   const runtime = isMovie
-    ? `${Math.floor((media as Movie).runtime! / 60)}h ${(media as Movie).runtime! % 60}m`
+    ? (() => {
+        const r = (media as Movie).runtime;
+        return r ? `${Math.floor(r / 60)}h ${r % 60}m` : "N/A";
+      })()
     : `${(media as TVShow).number_of_episodes} eps.`;
 
   return (
