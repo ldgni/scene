@@ -1,27 +1,38 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import type { Movie, TVShow } from "@/lib/types";
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatRuntime(minutes: number | null): string {
-  if (!minutes) return "N/A";
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  if (hours === 0) return `${mins}m`;
-  return `${hours}h ${mins}m`;
+export function getMediaTitle(media: {
+  media_type: "movie" | "tv";
+  title?: string;
+  name?: string;
+}): string {
+  return media.title ?? media.name ?? "";
 }
 
-export function formatReleaseDate(dateString: string): string {
-  if (!dateString) return "N/A";
-  try {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  } catch {
-    return dateString;
+export function getMediaYear(media: {
+  release_date?: string;
+  first_air_date?: string;
+}): string {
+  return (media.release_date || media.first_air_date)?.slice(0, 4) || "TBA";
+}
+
+export function getMediaDirector(media: Movie | TVShow): string {
+  if (media.media_type === "movie") {
+    return media.credits.crew.find((c) => c.job === "Director")?.name ?? "N/A";
   }
+  return media.created_by.map((c) => c.name).join(", ") || "N/A";
+}
+
+export function getMediaRuntime(media: Movie | TVShow): string {
+  if (media.media_type === "movie") {
+    const r = media.runtime;
+    return r ? `${Math.floor(r / 60)}h ${r % 60}m` : "N/A";
+  }
+  return `${media.number_of_episodes} eps.`;
 }

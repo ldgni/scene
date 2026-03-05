@@ -1,18 +1,31 @@
 import "./globals.css";
 
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Separator } from "@/components/ui/separator";
 import { Toaster } from "@/components/ui/sonner";
 
-const geist = Geist({ subsets: ["latin"] });
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "Scene - Keep track of your movie watchlist",
-  description: "Track movies you want to watch and movies you've watched",
+  title: {
+    default: "Scene - Keep track of your movies & TV shows",
+    template: "Scene - %s",
+  },
+  description:
+    "Scene is a web app that lets you track your movies & TV shows and manage your watchlist.",
 };
 
 export default function RootLayout({
@@ -21,16 +34,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geist.className} overflow-y-scroll antialiased`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning>
+      <body className="overflow-y-scroll font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <div className="mx-auto flex min-h-screen max-w-2xl flex-col p-4">
+          <div className="flex min-h-screen flex-col">
             <Header />
-            <main className="grow">{children}</main>
+            <Separator orientation="horizontal" />
+            <main className="mx-auto w-full max-w-2xl grow px-4 py-8">
+              {children}
+            </main>
+            <Separator orientation="horizontal" />
             <Footer />
           </div>
           <Toaster />

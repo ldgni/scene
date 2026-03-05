@@ -1,10 +1,10 @@
 "use client";
 
 import { LogIn, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
-import AuthForm from "@/components/auth-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,60 +14,92 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Spinner } from "@/components/ui/spinner";
-import { authClient } from "@/lib/auth-client";
+import { signIn, signOut } from "@/lib/auth/auth-client";
 
-interface AuthButtonProps {
-  isAuthenticated: boolean;
-}
-
-export default function AuthButton({ isAuthenticated }: AuthButtonProps) {
+export default function AuthButton({ isLoggedIn }: { isLoggedIn: boolean }) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const [loading, setLoading] = useState(false);
 
-  async function handleSignOut() {
-    setIsLoading(true);
-    await authClient.signOut();
-    router.push("/");
-    router.refresh();
-  }
-
-  if (isAuthenticated) {
+  if (isLoggedIn) {
     return (
       <Button
         variant="ghost"
         size="icon"
-        onClick={handleSignOut}
-        disabled={isLoading}>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <>
-            <LogOut />
-            <span className="sr-only">Sign out</span>
-          </>
-        )}
+        aria-label="Sign out"
+        disabled={loading}
+        onClick={async () =>
+          await signOut({
+            fetchOptions: {
+              onSuccess: () => {
+                router.refresh();
+              },
+              onRequest: () => {
+                setLoading(true);
+              },
+              onResponse: () => {
+                setLoading(false);
+              },
+            },
+          })
+        }>
+        <LogOut />
+        <span className="sr-only">Sign out</span>
       </Button>
     );
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" aria-label="Sign in">
           <LogIn />
           <span className="sr-only">Sign in</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Sign in to your account</DialogTitle>
-          <DialogDescription>
-            Sign in to continue or create a new account
-          </DialogDescription>
+          <DialogTitle>Sign in</DialogTitle>
+          <DialogDescription>Choose a provider to sign in</DialogDescription>
         </DialogHeader>
-        <AuthForm onSuccess={() => setIsOpen(false)} />
+        <Button
+          variant="outline"
+          disabled={loading}
+          onClick={() =>
+            signIn.social({
+              provider: "github",
+              callbackURL: pathname,
+              fetchOptions: {
+                onRequest: () => {
+                  setLoading(true);
+                },
+                onResponse: () => {
+                  setLoading(false);
+                },
+              },
+            })
+          }>
+          <FaGithub /> Continue with GitHub
+        </Button>
+        <Button
+          variant="outline"
+          disabled={loading}
+          onClick={() =>
+            signIn.social({
+              provider: "google",
+              callbackURL: pathname,
+              fetchOptions: {
+                onRequest: () => {
+                  setLoading(true);
+                },
+                onResponse: () => {
+                  setLoading(false);
+                },
+              },
+            })
+          }>
+          <FaGoogle /> Continue with Google
+        </Button>
       </DialogContent>
     </Dialog>
   );

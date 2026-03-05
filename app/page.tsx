@@ -1,13 +1,15 @@
-import MovieSearch from "@/components/movie-search";
+import SearchBar from "@/components/search-bar";
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
-    <div className="grid place-items-center gap-2">
-      <h1 className="text-4xl font-bold sm:text-6xl">Scene</h1>
-      <p className="text-muted-foreground mb-2 italic">
-        Keep track of your movie watchlist
-      </p>
-      <MovieSearch />
-    </div>
+    <>
+      <div className="mb-8 text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight">Scene</h1>
+        <p className="text-muted-foreground text-sm italic">
+          Track your movies & TV shows
+        </p>
+      </div>
+      <SearchBar />
+    </>
   );
 }

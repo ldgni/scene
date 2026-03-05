@@ -1,6 +1,6 @@
 # Scene
 
-> Movie watchlist collection
+> Watchlist manager for movies and TV shows
 
 ## Running Locally
 

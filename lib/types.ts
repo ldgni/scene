@@ -1,0 +1,49 @@
+type Genre = {
+  id: number;
+  name: string;
+};
+
+type Creator = {
+  id: number;
+  name: string;
+};
+
+type CrewMember = {
+  id: number;
+  name: string;
+  job: string;
+};
+
+export type Movie = {
+  id: number;
+  media_type: "movie";
+  title: string;
+  overview: string;
+  release_date?: string;
+  runtime: number | null;
+  genres: Genre[];
+  credits: {
+    crew: CrewMember[];
+  };
+};
+
+export type TVShow = {
+  id: number;
+  media_type: "tv";
+  name: string;
+  overview: string;
+  first_air_date?: string;
+  genres: Genre[];
+  number_of_episodes: number;
+  created_by: Creator[];
+};
+
+export type SearchResult = {
+  id: number;
+  media_type: "movie" | "tv";
+  title?: string;
+  name?: string;
+  overview: string;
+  release_date?: string;
+  first_air_date?: string;
+};
