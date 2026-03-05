@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { headers } from "next/headers";
 
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
@@ -20,3 +21,6 @@ export const auth = betterAuth({
     },
   },
 });
+
+export const getSession = async () =>
+  auth.api.getSession({ headers: await headers() });
