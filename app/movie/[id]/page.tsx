@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 
 import MediaDetail from "@/components/media-detail";
+import { isOnWatchlist } from "@/lib/actions";
 import { getMovieDetails } from "@/lib/api";
+import { getSession } from "@/lib/auth";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -15,5 +17,10 @@ export default async function MoviePage({ params }: Props) {
 
   const movie = await getMovieDetails(movieId);
 
-  return <MediaDetail media={movie} />;
+  const session = await getSession();
+  const watchlistStatus = session
+    ? await isOnWatchlist(movieId, "movie")
+    : undefined;
+
+  return <MediaDetail media={movie} watchlistId={watchlistStatus?.id} />;
 }

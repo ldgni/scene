@@ -1,8 +1,6 @@
-import { BookmarkPlus } from "lucide-react";
-
 import SearchBar from "@/components/search-bar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import WatchlistButton from "@/components/watchlist-button";
 import type { Movie, TVShow } from "@/lib/types";
 import {
   getMediaDirector,
@@ -11,7 +9,13 @@ import {
   getMediaYear,
 } from "@/lib/utils";
 
-export default function MediaDetail({ media }: { media: Movie | TVShow }) {
+export default function MediaDetail({
+  media,
+  watchlistId,
+}: {
+  media: Movie | TVShow;
+  watchlistId?: string;
+}) {
   const title = getMediaTitle(media);
   const releaseYear = getMediaYear(media);
   const director = getMediaDirector(media);
@@ -35,10 +39,13 @@ export default function MediaDetail({ media }: { media: Movie | TVShow }) {
         ))}
       </div>
       <p className="my-2">{media.overview}</p>
-      <Button disabled>
-        <BookmarkPlus />
-        Add to Watchlist
-      </Button>
+      <WatchlistButton
+        tmdbId={media.id}
+        mediaType={media.media_type}
+        title={title}
+        year={releaseYear}
+        initialWatchlistId={watchlistId}
+      />
     </div>
   );
 }

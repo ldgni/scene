@@ -1,5 +1,13 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -73,9 +81,32 @@ export const verification = pgTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
+export const watchlist = pgTable(
+  "watchlist",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    tmdbId: integer("tmdb_id").notNull(),
+    mediaType: text("media_type").notNull().$type<"movie" | "tv">(),
+    title: text("title").notNull(),
+    year: text("year").notNull(),
+  },
+  (table) => [
+    unique("watchlist_user_tmdb_idx").on(
+      table.userId,
+      table.tmdbId,
+      table.mediaType,
+    ),
+    index("watchlist_userId_idx").on(table.userId),
+  ],
+);
+
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  watchlist: many(watchlist),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -88,6 +119,13 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
+    references: [user.id],
+  }),
+}));
+
+export const watchlistRelations = relations(watchlist, ({ one }) => ({
+  user: one(user, {
+    fields: [watchlist.userId],
     references: [user.id],
   }),
 }));
