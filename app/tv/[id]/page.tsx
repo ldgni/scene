@@ -22,5 +22,11 @@ export default async function TVPage({ params }: Props) {
     ? await isOnWatchlist(showId, "tv")
     : undefined;
 
-  return <MediaDetail media={show} watchlistId={watchlistStatus?.id} />;
+  return (
+    <MediaDetail
+      media={show}
+      isLoggedIn={!!session}
+      watchlistId={watchlistStatus?.id}
+    />
+  );
 }

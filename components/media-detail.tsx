@@ -11,9 +11,11 @@ import {
 
 export default function MediaDetail({
   media,
+  isLoggedIn,
   watchlistId,
 }: {
   media: Movie | TVShow;
+  isLoggedIn: boolean;
   watchlistId?: string;
 }) {
   const title = getMediaTitle(media);
@@ -44,6 +46,7 @@ export default function MediaDetail({
         mediaType={media.media_type}
         title={title}
         year={releaseYear}
+        isLoggedIn={isLoggedIn}
         initialWatchlistId={watchlistId}
       />
     </div>
