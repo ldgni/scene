@@ -1,7 +1,7 @@
 "use client";
 
 import { LogIn, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 
@@ -18,6 +18,7 @@ import { signIn, signOut } from "@/lib/auth/auth-client";
 
 export default function AuthButton({ isLoggedIn }: { isLoggedIn: boolean }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [loading, setLoading] = useState(false);
 
   if (isLoggedIn) {
@@ -67,6 +68,7 @@ export default function AuthButton({ isLoggedIn }: { isLoggedIn: boolean }) {
           onClick={() =>
             signIn.social({
               provider: "github",
+              callbackURL: pathname,
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
@@ -85,6 +87,7 @@ export default function AuthButton({ isLoggedIn }: { isLoggedIn: boolean }) {
           onClick={() =>
             signIn.social({
               provider: "google",
+              callbackURL: pathname,
               fetchOptions: {
                 onRequest: () => {
                   setLoading(true);
