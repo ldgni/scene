@@ -15,18 +15,18 @@ export default async function TVPage({ params }: Props) {
 
   if (isNaN(showId)) notFound();
 
-  const show = await getTVShowDetails(showId);
+  const [show, session] = await Promise.all([
+    getTVShowDetails(showId),
+    getSession(),
+  ]);
 
-  const session = await getSession();
-  const watchlistStatus = session
-    ? await isOnWatchlist(showId, "tv")
-    : undefined;
+  const watchlistId = session ? await isOnWatchlist(showId, "tv") : undefined;
 
   return (
     <MediaDetail
       media={show}
       isLoggedIn={!!session}
-      watchlistId={watchlistStatus?.id}
+      watchlistId={watchlistId}
     />
   );
 }

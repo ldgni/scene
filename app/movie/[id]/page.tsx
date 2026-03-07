@@ -15,10 +15,12 @@ export default async function MoviePage({ params }: Props) {
 
   if (isNaN(movieId)) notFound();
 
-  const movie = await getMovieDetails(movieId);
+  const [movie, session] = await Promise.all([
+    getMovieDetails(movieId),
+    getSession(),
+  ]);
 
-  const session = await getSession();
-  const watchlistStatus = session
+  const watchlistId = session
     ? await isOnWatchlist(movieId, "movie")
     : undefined;
 
@@ -26,7 +28,7 @@ export default async function MoviePage({ params }: Props) {
     <MediaDetail
       media={movie}
       isLoggedIn={!!session}
-      watchlistId={watchlistStatus?.id}
+      watchlistId={watchlistId}
     />
   );
 }
