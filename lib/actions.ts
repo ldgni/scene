@@ -49,7 +49,7 @@ export async function getWatchlist() {
 
 export async function isOnWatchlist(tmdbId: number, mediaType: "movie" | "tv") {
   const session = await getSession();
-  if (!session) return { onWatchlist: false };
+  if (!session) return undefined;
 
   const [item] = await db
     .select({ id: watchlist.id })
@@ -63,5 +63,5 @@ export async function isOnWatchlist(tmdbId: number, mediaType: "movie" | "tv") {
     )
     .limit(1);
 
-  return item ? { onWatchlist: true, id: item.id } : { onWatchlist: false };
+  return item?.id;
 }
