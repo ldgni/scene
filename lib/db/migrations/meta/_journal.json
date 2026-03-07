@@ -15,6 +15,13 @@
       "when": 1772711060883,
       "tag": "0001_magical_sebastian_shaw",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772894184281,
+      "tag": "0002_smart_moira_mactaggert",
+      "breakpoints": true
     }
   ]
 }

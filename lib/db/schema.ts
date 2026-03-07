@@ -92,6 +92,7 @@ export const watchlist = pgTable(
     mediaType: text("media_type").notNull().$type<"movie" | "tv">(),
     title: text("title").notNull(),
     year: text("year").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
     unique("watchlist_user_tmdb_idx").on(

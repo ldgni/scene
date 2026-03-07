@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 import { getSession } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -43,7 +43,8 @@ export async function getWatchlist() {
   return db
     .select()
     .from(watchlist)
-    .where(eq(watchlist.userId, session.user.id));
+    .where(eq(watchlist.userId, session.user.id))
+    .orderBy(desc(watchlist.createdAt));
 }
 
 export async function isOnWatchlist(tmdbId: number, mediaType: "movie" | "tv") {
