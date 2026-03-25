@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -11,6 +12,10 @@ import {
 } from "@/components/ui/table";
 import { getWatchlist } from "@/lib/actions";
 import { getSession } from "@/lib/auth";
+
+export const metadata: Metadata = {
+  title: "Watchlist",
+};
 
 export default async function WatchlistPage() {
   const session = await getSession();

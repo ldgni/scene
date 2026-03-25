@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: {
     default: "Scene - Keep track of your movies & TV shows",
-    template: "Scene - %s",
+    template: "%s - Scene",
   },
   description:
     "Scene is a web app that lets you track your movies & TV shows and manage your watchlist.",
